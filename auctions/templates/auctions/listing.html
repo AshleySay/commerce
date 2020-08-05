@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+
+{% block body %}
+<ul>
+    <img src="{{listing.image}}">
+    <li>{{ listing.title }}</li>
+    <li>{{ listing.description }}</li>
+</ul>
+<ul>
+    {% for bid in bids %}
+    <li>${{ bid.value }}</li>
+    {% endfor %}
+</ul>
+<form action="{% url 'listing' listing.title %}" method="POST">
+
+    {%csrf_token%}
+
+    <label for="bid">Bid: </label>
+    <input type="number" id="bid" name="bid">
+    <input type="submit">
+</form>
+{% endblock %}
