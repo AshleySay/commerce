@@ -9,7 +9,7 @@ class Listing(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
     starting_bid = models.DecimalField(max_digits=10, decimal_places=2)
-    image = models.ImageField()
+    image = models.URLField()
     category = models.CharField(max_length=64)
 
     def __str__(self):
