@@ -10,9 +10,11 @@
 </ul>
 <ul>
     {% for bid in bids %}
-    <li>${{ bid.value }}</li>
+    <li>{{ bid.value }}</li>
     {% endfor %}
 </ul>
+
+{{ max_bid }}
 <form action="{% url 'listing' listing.title %}" method="POST">
 
     {%csrf_token%}
