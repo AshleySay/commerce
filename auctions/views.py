@@ -6,6 +6,9 @@ from django.urls import reverse
 from django.db.models import Max
 
 from .models import User, Listing, Bids
+from .forms import NewListingForm, NewBidForm
+
+    ## build a forms file, refactor the two already existing forms into it, then build 3rd form.
 
 
 def index(request):
@@ -20,25 +23,35 @@ def newlisting(request):
             description=request.POST["description"],
             starting_bid=request.POST["starting_bid"],
             image=request.POST["image"],
-            category=request.POST["category"])
+            category=request.POST["category"],
+            user_id=request.user.id)
         listing.save()
-    return render(request, "auctions/newlisting.html")
+    return render(request, "auctions/newlisting.html",{
+        "NewListingForm": NewListingForm()
+    })
+
+def closelisting(request, title):
+    
+    return 1
 
 def listing(request, title):
-    listing = Listing.objects.get(title=title)
     max_bid = Bids.objects.all().filter(bid=Listing.objects.get(title=title)).aggregate(Max("value"))
+
     if request.method == "POST":
         bid = Bids(
             value=request.POST["bid"],
-            bid=Listing.objects.get(title=title)
+            bid=Listing.objects.get(title=title),
+            user_id=request.user.id
         )
-        if (float(bid.value) > listing.starting_bid) and (float(bid.value) > max_bid["value__max"]):
-            bid.save()
+        if (float(bid.value) > Listing.objects.get(title=title).starting_bid):
+            if not max_bid["value__max"] or (float(bid.value) > max_bid["value__max"]):
+                bid.save()
         else:
             return HttpResponse("Invalid Bid. Either less then original or less then largest")
     return render(request, "auctions/listing.html",{
-        "listing": listing,
+        "listing": Listing.objects.get(title=title),
         "bids": Bids.objects.all().filter(bid=Listing.objects.get(title=title)),
+        "NewBidForm": NewBidForm()
     })
 
 def login_view(request):

@@ -14,13 +14,20 @@
     {% endfor %}
 </ul>
 
-{{ max_bid }}
 <form action="{% url 'listing' listing.title %}" method="POST">
 
     {%csrf_token%}
-
-    <label for="bid">Bid: </label>
-    <input type="number" id="bid" name="bid">
+    {{ NewBidForm }}
     <input type="submit">
 </form>
+
+{% if request.user.id == listing.user_id %}
+
+<form action="{% url 'closelisting' listing.title %}" method="POST">
+    <input type="submit" name="CloseAuction" value="Close Auction">
+</form>
+
+{% endif %}
+
+
 {% endblock %}
