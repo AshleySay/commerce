@@ -8,7 +8,6 @@ from django.db.models import Max
 from .models import User, Listing, Bids
 from .forms import NewListingForm, NewBidForm
 
-    ## build a forms file, refactor the two already existing forms into it, then build 3rd form.
 
 
 def index(request):
@@ -31,11 +30,16 @@ def newlisting(request):
     })
 
 def closelisting(request, title):
-    
-    return 1
+    listing = Listing.objects.get(title=title)
+    if (listing.is_active == True):
+        listing.is_active = False
+        listing.save()
+        return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("index"))
 
 def listing(request, title):
     max_bid = Bids.objects.all().filter(bid=Listing.objects.get(title=title)).aggregate(Max("value"))
+    top_bidder = Bids.objects.all().filter(value=max_bid["value__max"]).values_list("user")
 
     if request.method == "POST":
         bid = Bids(
@@ -51,7 +55,8 @@ def listing(request, title):
     return render(request, "auctions/listing.html",{
         "listing": Listing.objects.get(title=title),
         "bids": Bids.objects.all().filter(bid=Listing.objects.get(title=title)),
-        "NewBidForm": NewBidForm()
+        "NewBidForm": NewBidForm(),
+        "top_bidder": top_bidder[0][0]
     })
 
 def login_view(request):

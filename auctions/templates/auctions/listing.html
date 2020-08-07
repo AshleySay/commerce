@@ -14,20 +14,25 @@
     {% endfor %}
 </ul>
 
+{% if listing.is_active %}
 <form action="{% url 'listing' listing.title %}" method="POST">
 
     {%csrf_token%}
     {{ NewBidForm }}
     <input type="submit">
 </form>
+{% else %}
 
-{% if request.user.id == listing.user_id %}
-
-<form action="{% url 'closelisting' listing.title %}" method="POST">
-    <input type="submit" name="CloseAuction" value="Close Auction">
-</form>
-
+{% if request.user.id == top_bidder and request.user.id == listing.user_id and not listing.is_active %}
+<h1>You have won the Auction</h1>
+{% endif %}
 {% endif %}
 
+{% if request.user.id == listing.user_id and listing.is_active %}
+<form action="{% url 'closelisting' listing.title %}" method="POST">
+    {%csrf_token%}
+    <input type="submit" name="CloseAuction" value="Close Auction">
+</form>
+{% endif %}
 
 {% endblock %}
