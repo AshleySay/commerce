@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Max
 
-from .models import User, Listing, Bids, Comments1
+from .models import User, Listing, Bids, Comments1, Watchlist
 from .forms import NewListingForm, NewBidForm, CommentForm
 
 
@@ -13,6 +13,14 @@ from .forms import NewListingForm, NewBidForm, CommentForm
 def index(request):
     return render(request, "auctions/index.html",{
         "listings": Listing.objects.all()
+    })
+
+def watchlist(request):
+    watchlist = list(Watchlist.objects.all().filter(user=request.user.username).values_list('listing', flat=True))
+    listing = Listing.objects.all()
+    return render(request, "auctions/watchlist/watchlist.html",{
+        "listing": listing,
+        "watchlist": watchlist
     })
 
 def newlisting(request):
@@ -39,11 +47,18 @@ def closelisting(request, title):
 
 def listing(request, title):
     max_bid = Bids.objects.all().filter(bid=Listing.objects.get(title=title)).aggregate(Max("value"))
+    
     try:
         temp = Bids.objects.all().filter(value=max_bid["value__max"]).values_list("user")
         top_bidder = temp[0][0]
     except:
         top_bidder = 0
+
+    try:
+        watch_check = Watchlist.objects.get(listing=title)
+        is_watched = True
+    except:
+        is_watched = False
 
     if request.method == "POST":
         if "SubmitBid" in request.POST:
@@ -65,13 +80,22 @@ def listing(request, title):
                 username=request.user.username
                 )
             comment.save()
+        elif "AddWatchlist" in request.POST:
+            watchitem = Watchlist(
+                item =Listing.objects.get(title=title),
+                user=request.user.username,
+                listing=title
+            )
+            watchitem.save()
+            is_watched = True
     return render(request, "auctions/listing.html",{
         "listing": Listing.objects.get(title=title),
         "bids": Bids.objects.all().filter(bid=Listing.objects.get(title=title)),
         "NewBidForm": NewBidForm(),
         "CommentForm": CommentForm(),
         "top_bidder": top_bidder,
-        "comments": Comments1.objects.all().filter(item=Listing.objects.get(title=title))
+        "comments": Comments1.objects.all().filter(item=Listing.objects.get(title=title)),
+        "is_watched": is_watched
     })
 
 def login_view(request):

@@ -15,7 +15,7 @@ class Listing(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.title} starting price: ${self.starting_bid}"
+        return f"{self.title}, {self.starting_bid}, {self.image}"
 
 class Bids(models.Model):
     bid = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="listing_bids")
@@ -30,3 +30,11 @@ class Comments1(models.Model):
     content = models.TextField()
     item = models.ForeignKey(Listing, on_delete=models.CASCADE, default=0)
     username = models.TextField()
+
+class Watchlist(models.Model):
+    item = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    user = models.TextField()
+    listing = models.TextField()
+
+    def __str__(self):
+        return f"{self.listing}"

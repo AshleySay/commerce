@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+<h1>Watchlist</h1>
+<ul>
+    {% for list in listing %}
+    {% if list.title in watchlist %}
+    <img src="{{ list.image }}">
+    <li><a href="{% url 'listing' list.title %}"" name="{{ list.title }}">{{ list.title }}</a></li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+{% endblock %}

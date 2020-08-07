@@ -47,4 +47,11 @@
     <input type="submit" name="SubmitComment">
 </form>
 
+{% if not is_watched %}
+<form action="{% url 'listing' listing.title %}" method="POST">
+    {%csrf_token%}
+    <input type="submit" name="AddWatchlist" value="Add to watchlist">
+</form>
+{% endif %}
+
 {% endblock %}
