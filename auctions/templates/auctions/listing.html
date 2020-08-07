@@ -5,12 +5,18 @@
 {% block body %}
 <ul>
     <img src="{{listing.image}}">
-    <li>{{ listing.title }}</li>
-    <li>{{ listing.description }}</li>
+    <li>Title: {{ listing.title }}</li>
+    <li>Description: {{ listing.description }}</li>
+    <li>Opening bid: ${{ listing.starting_bid }}</li>
 </ul>
 <ul>
     {% for bid in bids %}
     <li>{{ bid.value }}</li>
+    {% endfor %}
+</ul>
+<ul>
+    {% for comment in comments %}
+    <li>{{ comment.content }} - {{ comment.username }}</li>
     {% endfor %}
 </ul>
 
@@ -19,7 +25,7 @@
 
     {%csrf_token%}
     {{ NewBidForm }}
-    <input type="submit">
+    <input type="submit" name="SubmitBid">
 </form>
 {% else %}
 
@@ -34,5 +40,11 @@
     <input type="submit" name="CloseAuction" value="Close Auction">
 </form>
 {% endif %}
+
+<form action="{% url 'listing' listing.title %}" method="POST">
+    {%csrf_token%}
+    {{ CommentForm }}
+    <input type="submit" name="SubmitComment">
+</form>
 
 {% endblock %}

@@ -5,8 +5,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Max
 
-from .models import User, Listing, Bids
-from .forms import NewListingForm, NewBidForm
+from .models import User, Listing, Bids, Comments1
+from .forms import NewListingForm, NewBidForm, CommentForm
 
 
 
@@ -39,24 +39,39 @@ def closelisting(request, title):
 
 def listing(request, title):
     max_bid = Bids.objects.all().filter(bid=Listing.objects.get(title=title)).aggregate(Max("value"))
-    top_bidder = Bids.objects.all().filter(value=max_bid["value__max"]).values_list("user")
+    try:
+        temp = Bids.objects.all().filter(value=max_bid["value__max"]).values_list("user")
+        top_bidder = temp[0][0]
+    except:
+        top_bidder = 0
 
     if request.method == "POST":
-        bid = Bids(
-            value=request.POST["bid"],
-            bid=Listing.objects.get(title=title),
-            user_id=request.user.id
-        )
-        if (float(bid.value) > Listing.objects.get(title=title).starting_bid):
-            if not max_bid["value__max"] or (float(bid.value) > max_bid["value__max"]):
-                bid.save()
-        else:
-            return HttpResponse("Invalid Bid. Either less then original or less then largest")
+        if "SubmitBid" in request.POST:
+            bid = Bids(
+                value=request.POST["bid"],
+                bid=Listing.objects.get(title=title),
+                user_id=request.user.id
+            )
+            if (float(bid.value) > Listing.objects.get(title=title).starting_bid):
+                if not max_bid["value__max"] or (float(bid.value) > max_bid["value__max"]):
+                    bid.save()
+            else:
+                return HttpResponse("Invalid Bid. Either less than original or less than largest")
+        elif "SubmitComment" in request.POST:
+            comment = Comments1(
+                content=request.POST["content"],
+                item=Listing.objects.get(title=title),
+                user_id=request.user.id,
+                username=request.user.username
+                )
+            comment.save()
     return render(request, "auctions/listing.html",{
         "listing": Listing.objects.get(title=title),
         "bids": Bids.objects.all().filter(bid=Listing.objects.get(title=title)),
         "NewBidForm": NewBidForm(),
-        "top_bidder": top_bidder[0][0]
+        "CommentForm": CommentForm(),
+        "top_bidder": top_bidder,
+        "comments": Comments1.objects.all().filter(item=Listing.objects.get(title=title))
     })
 
 def login_view(request):
