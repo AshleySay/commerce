@@ -15,6 +15,18 @@ def index(request):
         "listings": Listing.objects.all()
     })
 
+def categories(request):
+    categories = set(Listing.objects.all().values_list("category", flat=True))
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
+
+def category(request, category):
+    categorylist = Listing.objects.all().filter(category=category)
+    return render(request, "auctions/category/category.html", {
+        "categorylist": categorylist
+    })
+
 def watchlist(request):
     watchlist = list(Watchlist.objects.all().filter(user=request.user.username).values_list('listing', flat=True))
     listing = Listing.objects.all()

@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+<ul>
+    {% for item in categorylist %}
+        {% if item.is_active %}
+            <img src="{{ item.image }}">
+            <li><a href="{% url 'listing' item.title %}"" name="{{ item.title }}">{{ item.title }}</a></li>
+            <li>{{ item.description }}</li>
+            <li>${{ item.starting_bid }}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endblock %}
