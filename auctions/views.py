@@ -4,12 +4,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.db.models import Max
+from decimal import Decimal
 
 from .models import User, Listing, Bids, Comments1, Watchlist
 from .forms import NewListingForm, NewBidForm, CommentForm
 
 
-
+# Render the template and pass in the listings model as context.
 def index(request):
     return render(request, "auctions/index.html",{
         "listings": Listing.objects.all()
@@ -107,7 +108,8 @@ def listing(request, title):
         "CommentForm": CommentForm(),
         "top_bidder": top_bidder,
         "comments": Comments1.objects.all().filter(item=Listing.objects.get(title=title)),
-        "is_watched": is_watched
+        "is_watched": is_watched,
+        "max_bid": max_bid["value__max"]
     })
 
 def login_view(request):

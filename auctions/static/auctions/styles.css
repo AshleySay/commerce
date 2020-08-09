@@ -2,7 +2,32 @@ body {
     padding: 10px;
 }
 
-img {
+img { 
     width: 200px;
     height: 200px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 60vh;
+    object-fit: cover;
+}
+
+.card-img {
+    width: 100%;
+    height: 60vh;
+    object-fit: cover;
+}
+
+div h5 {
+    filter: invert(1) contrast(9);
+    mix-blend-mode: difference;
+    color: black;
+
+}
+
+div p {
+    filter: invert(1) contrast(9);
+    mix-blend-mode: difference;
+    color: black;
 }
