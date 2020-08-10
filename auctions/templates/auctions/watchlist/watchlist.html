@@ -2,14 +2,21 @@
 {% load static %}
 
 {% block body %}
-<h1>Watchlist</h1>
-<ul>
+<div class="container-fluid">
+<h1 class="text-light">Watchlist</h1>
+<div class="card-group">
     {% for list in listing %}
     {% if list.title in watchlist %}
-    <img src="{{ list.image }}">
-    <li><a href="{% url 'listing' list.title %}"" name="{{ list.title }}">{{ list.title }}</a></li>
+    <div class="card">
+        <img src="{{ list.image }}" class="card-img-top" alt="{{ list.description }}">
+        <div class="card-body card-img-overlay">
+        <h5 class="card-title">{{ list.title }}</h5>
+        <p class="card-text">{{ list.description }}</p>
+        <a href="{% url 'listing' list.title %}" class="btn btn-primary stretched-link">Bid on the {{ list.title }}</a>
+        </div>
+    </div>
     {% endif %}
     {% endfor %}
-</ul>
-
+</div>
+</div>
 {% endblock %} 

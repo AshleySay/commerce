@@ -6,7 +6,7 @@ class NewListingForm(forms.Form):
         label="Describe the item:")
     starting_bid = forms.DecimalField(decimal_places=2,
         label="Starting bid: ($USD)")
-    image = forms.URLField(label="URL of your image:")
+    image = forms.URLField(label="URL of your image:", required=False)
     category = forms.CharField(label="Item category:")
 
 

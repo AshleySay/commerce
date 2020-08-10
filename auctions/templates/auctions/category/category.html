@@ -2,14 +2,20 @@
 {% load static %}
 
 {% block body %}
-<ul>
-    {% for item in categorylist %}
+<div class="container-fluid">
+    <div class="card-group">
+        {% for item in categorylist %}
         {% if item.is_active %}
-            <img src="{{ item.image }}">
-            <li><a href="{% url 'listing' item.title %}"" name="{{ item.title }}">{{ item.title }}</a></li>
-            <li>{{ item.description }}</li>
-            <li>${{ item.starting_bid }}</li>
+        <div class="card">
+            <img src="{{ item.image }}" class="card-img-top" alt="{{ item.description }}">
+            <div class="card-body card-img-overlay">
+            <h5 class="card-title">{{ item.title }}</h5>
+            <p class="card-text">{{ item.description }}</p>
+            <a href="{% url 'listing' item.title %}" class="btn btn-primary stretched-link">Bid on the {{ item.title }}</a>
+            </div>
+        </div>
         {% endif %}
-    {% endfor %}
-</ul>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
