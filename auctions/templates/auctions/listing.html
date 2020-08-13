@@ -32,6 +32,13 @@ It contains basic information about the listing. Title, Short description,
                   <input type="submit" class="btn btn-primary" name="AddWatchlist" value="Add to watchlist">
               </form>
               {% endif %}
+              {% if is_watched and request.user.id != listing.user_id %}
+              <form style="padding-top: 5px" action="{% url 'listing' listing.title %}" method="POST">
+                {%csrf_token%}
+                <input type="submit" class="btn btn-primary" name="RemoveWatchlist" value="Remove from watchlist">
+            </form>
+              {% endif %}
+
 
               {% if request.user.id == listing.user_id and listing.is_active %}
               <form action="{% url 'closelisting' listing.title %}" method="POST" style="padding-top: 5px">

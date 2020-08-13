@@ -14,8 +14,15 @@ from .forms import NewListingForm, NewBidForm, CommentForm
 
 # Render the index template and pass in the listings model as context.
 def index(request):
+    listing = Listing.objects.all()
+    high_bids = Listing.objects.annotate(Max('listing_bids__value'))
+    
+    #The zip has to be cast as a list because in the template it is iterated over twice.
+    listing_high_bids = list(zip(listing, high_bids))
+
     return render(request, "auctions/index.html",{
-        "listings": Listing.objects.all()
+        "listings": listing,
+        "listing_high_bids": listing_high_bids
     })
 
 # Render the categories template and pass in the categories from the Listing model.
@@ -134,6 +141,11 @@ def listing(request, title):
             )
             watchitem.save()
             is_watched=True
+        
+        # Removes item from a watchlist.
+        elif "RemoveWatchlist" in request.POST:
+            Watchlist.objects.filter(listing=title, user=request.user.username).delete()
+            is_watched=False
     return render(request, "auctions/listing.html",{
         "listing": Listing.objects.get(title=title),
         "bids": Bids.objects.all().filter(bid=Listing.objects.get(title=title)),

@@ -8,13 +8,14 @@ The Listings model is being inherited as context.-->
 <div class="container-fluid bg-dark">
 <h2 class="text-light">Active Listings</h2>
     <div class="card-group">
-        {% for listing in listings %}
+        {% for listing, high_bid in listing_high_bids %}
         {% if listing.is_active %}
         <div class="card">
             <img src="{{ listing.image }}" class="card-img-top" alt="{{ listing.description }}">
             <div class="card-body card-img-overlay">
             <h5 class="card-title">{{ listing.title }}</h5>
             <p class="card-text">{{ listing.description }}</p>
+            <p class="card-text">Curent bid: ${{high_bid.listing_bids__value__max}}</p>
             <a href="{% url 'listing' listing.title %}" class="btn btn-primary stretched-link">Bid on the {{ listing.title }}</a>
             </div>
         </div>
@@ -24,13 +25,14 @@ The Listings model is being inherited as context.-->
     <hr>
 <h2 class="text-light">Closed Listings</h2>
     <div class="card-deck">
-        {% for listing in listings %}
+        {% for listing, high_bid in listing_high_bids %}
         {% if not listing.is_active %}
         <div class="card">
             <img src="{{ listing.image }}" class="card-img-top" alt="{{ listing.description }}">
             <div class="card-body card-img-overlay">
             <h5 class="card-title">{{ listing.title }}</h5>
             <p class="card-text">{{ listing.description }}</p>
+            <p class="card-text">Final bid: ${{high_bid.listing_bids__value__max}}</p>
             <a href="{% url 'listing' listing.title %}" class="stretched-link"></a>
             </div>
         </div>
